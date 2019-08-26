@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itcast.dao.system.RoleDao">
+    <resultMap id="BaseResultMap" type="cn.itcast.domain.system.Role">
+        <id column="role_id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="remark" property="remark"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="company_id" property="companyId"/>
+        <result column="company_name" property="companyName"/>
+    </resultMap>
+
+    <!--查询全部-->
+    <select id="findAll" resultMap="BaseResultMap">
+        select * from pe_role where company_id=#{companyId}
+    </select>
+
+    <!--根据id查询-->
+    <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from pe_role where role_id = #{id}
+    </select>
+
+    <!--删除-->
+    <delete id="delete">
+        delete from pe_role where role_id = #{id}
+    </delete>
+
+    <!--保存-->
+    <insert id="save">
+        insert into pe_role (role_id, name, remark, order_no,company_id, company_name)
+        values (#{id}, #{name}, #{remark}, #{orderNo}, #{companyId}, #{companyName})
+    </insert>
+
+    <!--更新-->
+    <update id="update">
+        update pe_role
+        set name = #{name},
+          remark = #{remark},
+          order_no = #{orderNo}
+        where role_id = #{id}
+    </update>
+
+    <!--查询角色是否被角色用户表引用-->
+    <select id="findRoleUserByRoleId" resultType="int">
+        SELECT count(1) from pe_role_user where role_id=#{id}
+    </select>
+
+    <!--通过角色id查询角色的所有权限-->
+    <select id="findRoleModuleByRoleId" resultType="String">
+        SELECT module_id from pe_role_module where role_id=#{id}
+    </select>
+
+    <!--通过角色id删除所有权限-->
+    <update id="deleteModule">
+        DELETE FROM pe_role_module WHERE role_id=#{role_id}
+    </update>
+
+    <!--给角色添加权限-->
+    <update id="addModule">
+        INSERT INTO pe_role_module VALUES(#{arg0},#{arg1})
+    </update>
+
+    <!--通过用户id查询所有角色-->
+    <select id="findRoleByUserId" resultMap="BaseResultMap">
+        SELECT * from pe_role_user WHERE user_id=#{id}
+    </select>
+</mapper>
